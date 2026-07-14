@@ -1,0 +1,87 @@
+flowchart TB
+    subgraph C[用户触点]
+        APP[会员 APP]
+        DEVICE[体测仪]
+        PUSH[推送/服务消息]
+        STORE[商家端]
+    end
+
+    subgraph G[Agent 交互层]
+        CHAT[对话网关]
+        INTENT[意图识别]
+        SESSION[会话状态/工作记忆]
+        PERSONA[教练人格]
+    end
+
+    subgraph O[Agent 编排层]
+        CONTEXT[Context Builder]
+        ROUTER[任务路由]
+        WORKFLOW[工作流/Prompt Chaining]
+        TOOL[工具调用层]
+        POLICY[规则与安全引擎]
+        OUTPUT[结构化输出与响应生成]
+    end
+
+    subgraph D[业务数据层]
+        USERDB[用户/订阅/权限]
+        BODYDB[体测数据库]
+        PLANDB[计划/版本数据库]
+        TRAINDB[训练日志数据库]
+        DIETDB[饮食数据库]
+        STOREDB[门店/器械/动作数据库]
+    end
+
+    subgraph M[记忆与知识层]
+        WORKMEM[工作记忆]
+        PROFILE[用户长期画像]
+        EPISODE[训练场景记忆]
+        SAFETY[安全状态记忆]
+        VECTOR[向量/关键词混合检索]
+        KB[训练/动作/体测知识库]
+        TRACE[原始事件与审计链路]
+    end
+
+    subgraph A[异步与运营层]
+        WRITER[Memory Writer]
+        TRIGGER[主动触发器]
+        EVAL[离线评测/在线观测]
+        CMS[内容与规则配置]
+    end
+
+    APP --> CHAT
+    DEVICE --> BODYDB
+    PUSH --> APP
+    STORE --> STOREDB
+    CHAT --> INTENT --> ROUTER
+    ROUTER --> CONTEXT
+    CONTEXT --> SESSION
+    CONTEXT --> PROFILE
+    CONTEXT --> EPISODE
+    CONTEXT --> SAFETY
+    CONTEXT --> BODYDB
+    CONTEXT --> PLANDB
+    CONTEXT --> TRAINDB
+    CONTEXT --> DIETDB
+    CONTEXT --> STOREDB
+    CONTEXT --> VECTOR
+    CONTEXT --> KB
+    ROUTER --> WORKFLOW
+    WORKFLOW --> TOOL
+    TOOL --> POLICY
+    POLICY --> OUTPUT
+    PERSONA --> OUTPUT
+    OUTPUT --> CHAT
+    CHAT --> WRITER
+    WRITER --> PROFILE
+    WRITER --> EPISODE
+    WRITER --> SAFETY
+    WRITER --> TRACE
+    BODYDB --> TRIGGER
+    TRAINDB --> TRIGGER
+    PLANDB --> TRIGGER
+    TRIGGER --> PUSH
+    CMS --> WORKFLOW
+    CMS --> POLICY
+    EVAL --> INTENT
+    EVAL --> WORKFLOW
+    EVAL --> WRITER
